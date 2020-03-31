@@ -7,6 +7,7 @@ import { NativeModules, requireNativeComponent } from 'react-native';
 export const JitsiMeetView = requireNativeComponent('RNJitsiMeetView');
 export const JitsiMeetModule = NativeModules.RNJitsiMeetModule
 const call = JitsiMeetModule.call;
+const huddleCall = JitsiMeetModule.huddleCall;
 const audioCall = JitsiMeetModule.audioCall;
 JitsiMeetModule.call = (url, userInfo) => {
   userInfo = userInfo || {};
@@ -18,7 +19,7 @@ JitsiMeetModule.audioCall = (url, userInfo) => {
 }
 JitsiMeetModule.huddleCall = (url, huddleInfo) => {
   huddleInfo = huddleInfo || {};
-  call(url, huddleInfo);
+  huddleCall(url, huddleInfo);
 }
 export default JitsiMeetModule;
 

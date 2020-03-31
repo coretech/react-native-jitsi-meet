@@ -57,6 +57,11 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
     private RNJitsiMeetUserInfo userInfo;
 
     /**
+     * Huddle specific information set by the RN app.
+     */
+    private Bundle huddleInfo;
+
+    /**
      * Class used to build the immutable {@link RNJitsiMeetConferenceOptions} object.
      */
     public static class Builder {
@@ -73,6 +78,8 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
         private Boolean videoMuted;
 
         private RNJitsiMeetUserInfo userInfo;
+
+        private Bundle huddleInfo;
 
         public Builder() {
             featureFlags = new Bundle();
@@ -205,6 +212,12 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
             return this;
         }
 
+        public Builder setHuddleInfo(Bundle huddleInfo) {
+            this.huddleInfo = huddleInfo;
+
+            return this;
+        }
+
         /**
          * Builds the immutable {@link RNJitsiMeetConferenceOptions} object with the configuration
          * that this {@link Builder} instance specified.
@@ -223,6 +236,7 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
             options.audioOnly = this.audioOnly;
             options.videoMuted = this.videoMuted;
             options.userInfo = this.userInfo;
+            options.huddleInfo = this.huddleInfo;
 
             return options;
         }
@@ -238,6 +252,7 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
         colorScheme = in.readBundle();
         featureFlags = in.readBundle();
         userInfo = new RNJitsiMeetUserInfo(in.readBundle());
+        huddleInfo = in.readBundle();
         byte tmpAudioMuted = in.readByte();
         audioMuted = tmpAudioMuted == 0 ? null : tmpAudioMuted == 1;
         byte tmpAudioOnly = in.readByte();
@@ -297,6 +312,10 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
             props.putBundle("userInfo", userInfo.asBundle());
         }
 
+        if (huddleInfo != null) {
+            props.putBundle("huddleInfo", huddleInfo);
+        }
+
         urlProps.putBundle("config", config);
         props.putBundle("url", urlProps);
 
@@ -326,6 +345,7 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
         dest.writeBundle(colorScheme);
         dest.writeBundle(featureFlags);
         dest.writeBundle(userInfo != null ? userInfo.asBundle() : new Bundle());
+        dest.writeBundle(huddleInfo != null ? huddleInfo : new Bundle());
         dest.writeByte((byte) (audioMuted == null ? 0 : audioMuted ? 1 : 2));
         dest.writeByte((byte) (audioOnly == null ? 0 : audioOnly ? 1 : 2));
         dest.writeByte((byte) (videoMuted == null ? 0 : videoMuted ? 1 : 2));
@@ -336,3 +356,4 @@ public class RNJitsiMeetConferenceOptions implements Parcelable {
         return 0;
     }
 }
+
