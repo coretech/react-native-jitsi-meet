@@ -1,5 +1,6 @@
 package com.reactnativejitsimeet;
 
+import android.os.Bundle;
 import android.util.Log;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -7,6 +8,8 @@ import java.net.MalformedURLException;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableMapKeySetIterator;
+import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.bridge.ReadableMap;
@@ -53,10 +56,12 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                             }
                           }
                     }
+                    Bundle _huddleInfo = new Bundle();
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
                             .setRoom(url)
                             .setAudioOnly(false)
                             .setUserInfo(_userInfo)
+                            .setHuddleInfo(_huddleInfo)
                             .build();
                     mJitsiMeetViewReference.getJitsiMeetView().join(options);
                 }
@@ -86,10 +91,56 @@ public class RNJitsiMeetModule extends ReactContextBaseJavaModule {
                             }
                           }
                     }
+                    Bundle _huddleInfo = new Bundle();
                     RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
                             .setRoom(url)
                             .setAudioOnly(true)
                             .setUserInfo(_userInfo)
+                            .setHuddleInfo(_huddleInfo)
+                            .build();
+                    mJitsiMeetViewReference.getJitsiMeetView().join(options);
+                }
+            }
+        });
+    }
+
+    @ReactMethod
+    public void huddleCall(String url, ReadableMap huddleInfo) {
+        UiThreadUtil.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mJitsiMeetViewReference.getJitsiMeetView() != null) {
+                    RNJitsiMeetUserInfo _userInfo = new RNJitsiMeetUserInfo();
+                    Bundle _huddleInfo = new Bundle();
+                    if (huddleInfo != null) {
+                        for (
+                                ReadableMapKeySetIterator it = huddleInfo.keySetIterator();
+                                it.hasNextKey();
+                        ) {
+                            String key = it.nextKey();
+                            ReadableType type = huddleInfo.getType(key);
+                            switch(type) {
+                                case Null:
+                                    break;
+                                case Boolean:
+                                    _huddleInfo.putBoolean(key, huddleInfo.getBoolean(key));
+                                    break;
+                                case Number:
+                                    _huddleInfo.putInt(key, huddleInfo.getInt(key));
+                                    break;
+                                case String:
+                                    _huddleInfo.putString(key, huddleInfo.getString(key));
+                                    break;
+                                default:
+                                    throw new IllegalArgumentException("Unsupported type " + type);
+                            }
+                        }
+                    }
+                    RNJitsiMeetConferenceOptions options = new RNJitsiMeetConferenceOptions.Builder()
+                            .setRoom(url)
+                            .setAudioOnly(false)
+                            .setUserInfo(_userInfo)
+                            .setHuddleInfo(_huddleInfo)
                             .build();
                     mJitsiMeetViewReference.getJitsiMeetView().join(options);
                 }
